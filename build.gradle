@@ -1,0 +1,86 @@
+plugins {
+    id "com.github.hierynomus.license" version "0.14.0"
+    id "com.jfrog.artifactory" version "4.4.15"
+}
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'maven-publish'
+
+version = '1.0.0'
+group = 'net.cpas'
+archivesBaseName = 'CpasLibrary'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+project.ext.rlgMavenUser = hasProperty('rlgMavenUser') ? rlgMavenUser : System.getenv('rlgMavenUser')
+project.ext.rlgMavenPassword = hasProperty('rlgMavenPassword') ? rlgMavenPassword : System.getenv('rlgMavenPassword')
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.0.pr2'
+}
+
+jar {
+    baseName = archivesBaseName
+    version =  version
+}
+
+license {
+    header project.file("LICENSE.txt")
+    strictCheck true
+    mapping {
+        java='SLASHSTAR_STYLE'
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.3'
+}
+
+artifactory {
+    contextUrl = 'https://reallifegames.net/artifactory/'
+    publish {
+        repository {
+            repoKey = 'library-release-local'
+            username = "${rlgMavenUser}"
+            password = "${rlgMavenPassword}"
+            maven = true
+        }
+        defaults {
+            publications ('mavenJava')
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId "${group}"
+            artifactId "${archivesBaseName}"
+            version "${version}"
+            from components.java
+
+            artifact (sourcesJar) {
+                classifier "sources"
+            }
+            artifact (javadocJar) {
+                classifier "javadoc"
+            }
+        }
+    }
+}
