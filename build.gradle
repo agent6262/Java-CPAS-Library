@@ -56,7 +56,7 @@ artifactory {
     contextUrl = 'https://reallifegames.net/artifactory/'
     publish {
         repository {
-            repoKey = 'library-release-local'
+            repoKey = 'gradle-release-local'
             username = "${rlgMavenUser}"
             password = "${rlgMavenPassword}"
             maven = true

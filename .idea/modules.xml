@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/cpas.iml" filepath="$PROJECT_DIR$/.idea/modules/cpas.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/cpas_main.iml" filepath="$PROJECT_DIR$/.idea/modules/cpas_main.iml" group="cpas" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cpas_test.iml" filepath="$PROJECT_DIR$/.idea/modules/cpas_test.iml" group="cpas" />
     </modules>
   </component>
 </project>
