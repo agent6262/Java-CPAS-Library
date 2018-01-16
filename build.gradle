@@ -7,7 +7,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'maven-publish'
 
-version = '1.0.0'
+version = '1.0.1'
 group = 'net.cpas'
 archivesBaseName = 'CpasLibrary'
 
@@ -28,6 +28,9 @@ dependencies {
 jar {
     baseName = archivesBaseName
     version =  version
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
 
 license {
