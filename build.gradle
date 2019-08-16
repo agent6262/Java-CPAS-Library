@@ -1,21 +1,23 @@
 plugins {
     id "com.github.hierynomus.license" version "0.14.0"
-    id "com.jfrog.artifactory" version "4.4.15"
+    id "com.jfrog.artifactory" version "4.9.8"
+    id 'com.github.johnrengelman.shadow' version '2.0.2'
 }
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'maven-publish'
 
-version = '1.0.2'
+version = '1.0.3'
 group = 'net.cpas'
 archivesBaseName = 'CpasLibrary'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-project.ext.rlgMavenUser = hasProperty('rlgMavenUser') ? rlgMavenUser : System.getenv('rlgMavenUser')
-project.ext.rlgMavenPassword = hasProperty('rlgMavenPassword') ? rlgMavenPassword : System.getenv('rlgMavenPassword')
+project.ext.cpasMavenUser = hasProperty('cpasMavenUser') ? cpasMavenUser : System.getenv('cpasMavenUser')
+project.ext.cpasMavenPassword = hasProperty('cpasMavenPassword') ? cpasMavenPassword : System.getenv('cpasMavenPassword')
+project.ext.cpasMavenUrl = hasProperty('cpasMavenUrl') ? cpasMavenUrl : System.getenv('cpasMavenUrl')
 
 repositories {
     mavenCentral()
@@ -25,20 +27,20 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.3'
 }
 
-jar {
-    baseName = archivesBaseName
-    version =  version
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-}
-
 license {
     header project.file("LICENSE.txt")
     strictCheck true
     mapping {
         java='SLASHSTAR_STYLE'
     }
+}
+
+shadowJar {
+    baseName = archivesBaseName
+    classifier = null
+    version = version
+
+    relocate 'com.fasterxml.jackson', 'net.cpas.fasterxml'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -56,12 +58,12 @@ task wrapper(type: Wrapper) {
 }
 
 artifactory {
-    contextUrl = 'https://reallifegames.net/artifactory/'
+    contextUrl = "${cpasMavenUrl}"
     publish {
         repository {
             repoKey = 'gradle-release-local'
-            username = "${rlgMavenUser}"
-            password = "${rlgMavenPassword}"
+            username = "${cpasMavenUser}"
+            password = "${cpasMavenPassword}"
             maven = true
         }
         defaults {
