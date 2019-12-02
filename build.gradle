@@ -1,6 +1,6 @@
 plugins {
     id "com.github.hierynomus.license" version "0.14.0"
-    id "com.jfrog.artifactory" version "4.9.6"
+    id "com.jfrog.bintray" version "1.8.4"
     id 'com.github.johnrengelman.shadow' version '2.0.2'
 }
 apply plugin: 'java'
@@ -57,21 +57,6 @@ task wrapper(type: Wrapper) {
     gradleVersion = '4.3'
 }
 
-artifactory {
-    contextUrl = "${cpasMavenUrl}"
-    publish {
-        repository {
-            repoKey = 'gradle-release-local'
-            username = "${cpasMavenUser}"
-            password = "${cpasMavenPassword}"
-            maven = true
-        }
-        defaults {
-            publications ('mavenJava')
-        }
-    }
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -87,5 +72,17 @@ publishing {
                 classifier "javadoc"
             }
         }
+    }
+}
+
+bintray {
+    user = "${cpasMavenUser}"
+    key = "${cpasMavenPassword}"
+    publications = ['mavenJava']
+    pkg {
+        repo = 'general'
+        name = 'cpas'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/agent6262/Java-CPAS-Library.git'
     }
 }
